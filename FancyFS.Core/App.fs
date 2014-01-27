@@ -23,7 +23,7 @@ type Response =
 
 type Pipeline =
     {
-        Element : (Request -> Response -> Response)
+        Element : ((Request * Response) -> (Request * Response))
         Next : Pipeline option
     }
 
@@ -32,7 +32,7 @@ module App =
     let private defaultResponse = { Headers = Map.empty; StatusCode = None; Body = ""; }
 
     let BaseRequest =
-        let func req resp = resp
+        let func (req, resp) =(req, resp)
         { Element = func; Next = None; } 
 
     let (==>) pipeline func =
@@ -41,10 +41,11 @@ module App =
 
     let ExecutePipeline pipeline request =
         let rec ExecuteElement req resp elem =
-            let r = elem.Element req resp
-            match r.StatusCode with
-            | Some _ -> r
+            let req, resp = elem.Element (req, resp)
+            match resp.StatusCode with
+            | Some _ -> resp
             | None -> match elem.Next with
-                      | Some x -> x.Element req r
-                      | None -> r
+                      | Some x -> let req, resp = x.Element (req, resp)
+                                  resp
+                      | None -> resp
         ExecuteElement request defaultResponse pipeline 

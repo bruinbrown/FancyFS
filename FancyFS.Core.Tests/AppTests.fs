@@ -18,7 +18,7 @@ module AppTests =
 
     [<Test>]
     let ``Using ==> should increase pipeline length`` () =
-        let testFun = fun req resp -> resp
+        let testFun = fun (req, resp) -> (req, resp)
 
         let emptyPipeline = BaseRequest
 
