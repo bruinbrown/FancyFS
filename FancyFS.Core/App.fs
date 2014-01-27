@@ -31,6 +31,10 @@ module App =
     
     let private defaultResponse = { Headers = Map.empty; StatusCode = None; Body = ""; }
 
+    let BaseRequest =
+        let func req resp = resp
+        { Element = func; Next = None; } 
+
     let (==>) pipeline func =
         let p = { Element = func; Next = None; }
         { pipeline with Next = Some p; }
