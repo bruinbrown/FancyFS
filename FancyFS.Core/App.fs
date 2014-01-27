@@ -28,6 +28,10 @@ type Pipeline =
         Next : Pipeline option
     }
 
+[<System.AttributeUsage(System.AttributeTargets.Field)>]
+type PipelineAttribute () =
+    inherit System.Attribute()
+
 module App =
     
     let private defaultResponse = { Headers = Map.empty; StatusCode = None; Body = ""; }
