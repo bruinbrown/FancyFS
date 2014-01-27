@@ -1,9 +1,31 @@
 ﻿namespace FancyFS.Hosting.ASPNET
+
 open System
 open System.Web
 open System.Configuration
+
 open FancyFS.Core
 open FancyFS.Core.App
+
+type FancyPipelineElement () = 
+        inherit ConfigurationElement ()
+
+        [<ConfigurationProperty("type", DefaultValue = "", IsRequired = true)>]
+        member this.Type
+            with get () = this.["type"] :?> string
+            and set (v:string) = this.["type"] <- (v :> obj)
+
+        [<ConfigurationProperty("assembly", DefaultValue = "", IsRequired = true)>]
+        member this.Assembly
+            with get () = this.["assembly"] :?> string
+            and set (v:string) = this.["assembly"] <- (v :> obj)
+
+type FancyConfigurationSection () =
+    inherit ConfigurationSection()
+
+    member this.Pipeline
+        with get () = this.["pipeline"] :?> FancyPipelineElement
+        and set (v:FancyPipelineElement) = this.["pipeline"] <- (v :> obj)
 
 type FancyHttpRequestHandler () as this = 
 
