@@ -6,9 +6,21 @@ type IUser =
     interface
     end
 
+type Cookie =
+    {
+        Name : string
+        Value : string
+        Domain : string
+        Path : string
+        Expires : System.DateTime
+        Secure : bool
+        Shareable : bool
+        SubKeys : Map<string, string>
+    }
+
 type Request =
     {
-        Cookies : Map<string, string>
+        Cookies : Cookie list
         Headers : Map<string, string>
         QueryString : Map<string, string>
         Path : System.Uri
