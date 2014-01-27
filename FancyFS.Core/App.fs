@@ -8,6 +8,7 @@ type IUser =
 
 type Request =
     {
+        Cookies : Map<string, string>
         Headers : Map<string, string>
         QueryString : Map<string, string>
         Path : System.Uri
