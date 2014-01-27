@@ -16,7 +16,9 @@ module BasicAuth =
     let PipelineElement (userValidation:IUserValidation) (req:Request, resp) =
         let userData = req.Headers.TryFind "Authorization"
         match userData with
-        | Some x -> let base64 = (x.Split(' ')).[1]
+        | Some x -> let authTypeIsBasic = (x.StartsWith("Basic"))
+                    if not authTypeIsBasic then (req, resp) else
+                    let base64 = (x.Split(' ')).[1]
                     let user,pass = DecodeBase64 base64
                     let user = userValidation.GetUserFromUsernamePassword user pass
                     let req = { req with User = user; }
