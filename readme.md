@@ -3,8 +3,8 @@
 Fancy is a web server built in F# which is intended to be super easy to use.
 
 ## How does it work?
-A Fancy application consists of a series of functions chained together in order to create a pipeline. Each function takes a request and a response and returns a new response. So we get a type signature for each element like:
-`Request -> Response -> Repsonse
+A Fancy application consists of a series of functions chained together in order to create a pipeline. Each function takes a request and a response and returns a new response. So we get a type signature for each element like:  
+```(Request * Response) -> (Request * Response)```  
 Super easy is the aim.
 
 ## How can it be hosted?
