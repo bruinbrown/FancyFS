@@ -1,7 +1,8 @@
 ﻿namespace FancyFS.ASP.Example
 
 open FancyFS.Core
-open FancyFS.Core.App
+open FancyFS.Core.ResponseModule
+open FancyFS.Core.PipelineModule
 
 type ExamplePipelineLocation () =
 
@@ -12,13 +13,13 @@ type ExamplePipelineLocation () =
         }
 
     let delayFunc input =
-        async {
+        (async {
             let! req, resp = input
             do! Async.Sleep(10000)
             return (req, resp)
-        }
-
-    let pipeline = BaseRequest ==> writerFunc ==> delayFunc ==> writerFunc
+        })
+        
+    let pipeline = writerFunc ==> delayFunc ==> writerFunc
 
     interface IPipelineLocation with
         member this.Pipeline

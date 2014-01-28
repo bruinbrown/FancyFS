@@ -5,7 +5,8 @@ open System.Web
 open System.Configuration
 
 open FancyFS.Core
-open FancyFS.Core.App
+open FancyFS.Core.ResponseModule
+open FancyFS.Core.PipelineModule
 
 type FancyPipelineElement () = 
         inherit ConfigurationElement ()
@@ -94,7 +95,7 @@ type FancyHttpRequestHandler () as this =
             let req = ConvertRequest wrapper
             let pipeline = (GetPipelineLocation ()).Pipeline
             let computation = async {
-                let! (req, resp) = ExecutePipelineAsync pipeline req
+                let! (req, resp) = ExecutePipelineAsync pipeline req DefaultResponse
                 CreateResponse resp wrapper
             }
             let result = Async.RunSynchronously (computation)

@@ -34,35 +34,12 @@ type Response =
         Body : string
     }
 
-(* I'm not a fan of how I've handled this here. The only pure way would take significantly longer and blow up the stack
-   Open to any suggestions on how this could be changed to be implemented better *)
-type Pipeline =
-    {
-        Element : (Async<(Request * Response)> -> Async<(Request * Response)>)
-        mutable Next : Pipeline option
-    }
+type Pipeline = Async<Request * Response> -> Async<Request * Response>
 
 type IPipelineLocation =
     abstract member Pipeline : Pipeline with get
 
-module App =
-    
-    let private defaultResponse = { Headers = Map.empty; StatusCode = None; Body = ""; }
-
-    let BaseRequest =
-        let func inp = inp
-        { Element = func; Next = None; } 
-
-    (* As above. Not keen on mutable but for now, it will have to do*)
-    let (==>) pipeline func =
-        let rec GetLastElem elem =
-            match elem.Next with
-            | Some x -> GetLastElem x
-            | None -> elem
-        let last = GetLastElem pipeline
-        do last.Next <- Some { Element = func; Next = None; }
-        pipeline
-
+module PipelineModule =
     let FindPipeline () =
         let pipelineInterface = typeof<IPipelineLocation>
         let pipelineLocs = System.AppDomain.CurrentDomain.GetAssemblies()
@@ -72,16 +49,21 @@ module App =
                            |> Seq.filter (fun t -> not (t.Assembly = pipelineInterface.Assembly))
                            |> Seq.head
         let pipelineLocInst = System.Activator.CreateInstance(pipelineLocs) :?> IPipelineLocation
-        pipelineLocInst
+        pipelineLocInst 
 
-    let ExecutePipelineAsync pipeline request =
-        let rec ExecuteElement input elem =
-            let p = elem.Element input
-            match elem.Next with
-            | Some x -> ExecuteElement p x
-            | None -> p
+    (* The reason for a custom operator for now is that it leaves the potential for adding in steps which may
+       happen between pipeline functions. E.g. we may choose to return an indication of whether the 
+       pipeline should terminate *)
+    let (==>) (f:Async<Request * Response> -> Async<Request * Response>) g (x:Async<Request * Response>) =
+        let res = f x
+        g res
+
+    let ExecutePipelineAsync pipeline request initialResponse =
         let asyncInput =
             async {
-                return (request, defaultResponse)
+                return (request, initialResponse)
             }
-        ExecuteElement asyncInput pipeline 
+        pipeline asyncInput
+
+module ResponseModule =
+    let DefaultResponse = { Headers = Map.empty; StatusCode = None; Body = ""; }

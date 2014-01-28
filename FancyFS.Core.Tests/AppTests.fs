@@ -4,32 +4,26 @@ open FsUnit
 open NUnit.Framework
 
 [<TestFixture>]
-module AppTests =
+module PipelineTests =
 
     open FancyFS.Core
-    open FancyFS.Core.App
+    open FancyFS.Core.PipelineModule
+    open FancyFS.Core.ResponseModule
 
-    let private PipelineLength pipeline =
-        let rec Count pipeline count =
-            match pipeline.Next with
-            | None -> count
-            | Some x -> Count x (count+1)
-        Count pipeline 0
+    let SampleRequest = { Headers = Map.empty; QueryString = Map.empty; Cookies = []; Path = System.Uri("http://wwww.google.com"); User = None; }
 
     [<Test>]
-    let ``BaseRequest should cause pipeline count to remain at zero`` () =
-        let emptyPipeline = BaseRequest
-        (PipelineLength emptyPipeline) |> should equal 0
+    let ``Adding a function to the pipeline should execute it`` () =
+        let writerFunc inp =
+            async {
+                let! req, resp = inp
+                return (req, { resp with Body = "Function executed" })
+            }
 
-    [<Test>]
-    let ``Using ==> should increase pipeline length`` () =
-        let testFun = fun inp -> inp
-        let newPipeline = BaseRequest ==> testFun
-        (PipelineLength newPipeline) |> should equal 1
+        let pipeline = writerFunc
 
-    [<Test>]
-    let ``Using multiple ==> should make pipeline to be same length`` () =
-        let testFun = fun inp -> inp
-        do BaseRequest.Next <- None
-        let newPipeline = BaseRequest ==> testFun ==> testFun ==> testFun ==> testFun
-        (PipelineLength newPipeline) |> should equal 4
+        let output = ExecutePipelineAsync pipeline SampleRequest DefaultResponse
+
+        let req, res = Async.RunSynchronously output
+
+        res.Body |> should equal "Function executed"
