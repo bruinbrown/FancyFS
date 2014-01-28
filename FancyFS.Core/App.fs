@@ -34,10 +34,12 @@ type Response =
         Body : string
     }
 
+(* I'm not a fan of how I've handled this here. The only pure way would take significantly longer and blow up the stack
+   Open to any suggestions on how this could be changed to be implemented better *)
 type Pipeline =
     {
         Element : ((Request * Response) -> (Request * Response))
-        Next : Pipeline option
+        mutable Next : Pipeline option
     }
 
 type IPipelineLocation =
@@ -51,9 +53,15 @@ module App =
         let func (req, resp) =(req, resp)
         { Element = func; Next = None; } 
 
+    (* As above. Not keen on mutable but for now, it will have to do*)
     let (==>) pipeline func =
-        let p = { Element = func; Next = None; }
-        { pipeline with Next = Some p; }
+        let rec GetLastElem elem =
+            match elem.Next with
+            | Some x -> GetLastElem x
+            | None -> elem
+        let last = GetLastElem pipeline
+        do last.Next <- Some { Element = func; Next = None; }
+        pipeline
 
     let FindPipeline () =
         let pipelineInterface = typeof<IPipelineLocation>
