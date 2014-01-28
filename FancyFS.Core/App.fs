@@ -38,7 +38,7 @@ type Response =
    Open to any suggestions on how this could be changed to be implemented better *)
 type Pipeline =
     {
-        Element : ((Request * Response) -> (Request * Response))
+        Element : (Async<(Request * Response)> -> Async<(Request * Response)>)
         mutable Next : Pipeline option
     }
 
@@ -50,7 +50,7 @@ module App =
     let private defaultResponse = { Headers = Map.empty; StatusCode = None; Body = ""; }
 
     let BaseRequest =
-        let func (req, resp) =(req, resp)
+        let func inp = inp
         { Element = func; Next = None; } 
 
     (* As above. Not keen on mutable but for now, it will have to do*)
@@ -74,11 +74,14 @@ module App =
         let pipelineLocInst = System.Activator.CreateInstance(pipelineLocs) :?> IPipelineLocation
         pipelineLocInst
 
-    let ExecutePipeline pipeline request =
-        let rec ExecuteElement req resp elem =
-            let req, resp = elem.Element (req, resp)
+    let ExecutePipelineAsync pipeline request =
+        let rec ExecuteElement input elem =
+            let p = elem.Element input
             match elem.Next with
-            | Some x -> let req, resp = x.Element (req, resp)
-                        resp
-            | None -> resp
-        ExecuteElement request defaultResponse pipeline 
+            | Some x -> ExecuteElement p x
+            | None -> p
+        let asyncInput =
+            async {
+                return (request, defaultResponse)
+            }
+        ExecuteElement asyncInput pipeline 

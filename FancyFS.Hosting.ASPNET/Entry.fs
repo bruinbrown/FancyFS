@@ -85,7 +85,6 @@ type FancyHttpRequestHandler () as this =
         | Some x -> x
         | None -> GetPipelineFromAssembly()
 
-
     interface IHttpHandler with
         member this.IsReusable 
             with get () = false
@@ -93,8 +92,10 @@ type FancyHttpRequestHandler () as this =
         member this.ProcessRequest (context:HttpContext) =
             let wrapper = HttpContextWrapper(context)
             let req = ConvertRequest wrapper
-            let writerFunc = fun (req, resp) -> (req, { resp with Body = "test"})
             let pipeline = (GetPipelineLocation ()).Pipeline
-            let resp = ExecutePipeline pipeline req
-            CreateResponse resp wrapper
+            let computation = async {
+                let! (req, resp) = ExecutePipelineAsync pipeline req
+                CreateResponse resp wrapper
+            }
+            let result = Async.RunSynchronously (computation)
             ()
