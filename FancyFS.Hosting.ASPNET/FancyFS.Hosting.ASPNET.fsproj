@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entry.fs" />
+    <Compile Include="AsyncHttpHandler.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FancyFS.Core\FancyFS.Core.fsproj">

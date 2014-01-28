@@ -1,6 +1,7 @@
 ﻿namespace FancyFS.Hosting.ASPNET
 
 open System
+open System.Threading.Tasks
 open System.Web
 open System.Configuration
 
@@ -21,6 +22,7 @@ type FancyPipelineElement () =
             with get () = this.["assembly"] :?> string
             and set (v:string) = this.["assembly"] <- (v :> obj)
 
+
 type FancyConfigurationSection () =
     inherit ConfigurationSection()
 
@@ -29,8 +31,9 @@ type FancyConfigurationSection () =
         with get () = this.["pipeline"] :?> FancyPipelineElement
         and set (v:FancyPipelineElement) = this.["pipeline"] <- (v :> obj)
 
-type FancyHttpRequestHandler () as this = 
-    let ConvertRequest (wrapper:HttpContextWrapper) =
+module RequestResponseMappers =
+    
+    let ConvertRequest (wrapper:HttpContextBase) =
         let rec ToMap (collection:Collections.Specialized.NameValueCollection) (dict:Map<string, string>) index =
             if index = collection.Count then dict
             else
@@ -38,7 +41,7 @@ type FancyHttpRequestHandler () as this =
                 let value = collection.[index]
                 let dict = dict.Add(key, value)
                 ToMap collection dict (index+1)
-            
+          
         let rec ConvertCookies (cookies:HttpCookieCollection) (newCookies:Cookie list) index =
             if index = cookies.Count then newCookies
             else
@@ -46,6 +49,7 @@ type FancyHttpRequestHandler () as this =
                 let subCookies = ToMap value.Values Map.empty 0
                 let c = { Name = value.Name; Value = value.Value; Path = value.Path; Domain = value.Domain; Expires = value.Expires; Secure = value.Secure; Shareable = value.Shareable; SubKeys = subCookies; }
                 ConvertCookies cookies (c::newCookies) (index+1)
+        
         let headers = ToMap wrapper.Request.Headers Map.empty 0
         let qs = ToMap wrapper.Request.QueryString Map.empty 0
         let user = None
@@ -53,7 +57,8 @@ type FancyHttpRequestHandler () as this =
         let cookies = ConvertCookies wrapper.Request.Cookies [] 0
         { Headers = headers; QueryString = qs; User = user; Path = path; Cookies = cookies; }
 
-    let CreateResponse resp (wrapper:HttpContextWrapper) =
+
+    let CreateResponse resp (wrapper:HttpContextBase) =
         let rec AddHeaders (headers:(string * string) list) =
             match headers with
             | [] -> ()
@@ -66,6 +71,8 @@ type FancyHttpRequestHandler () as this =
         | None -> wrapper.Response.StatusCode <- 500
         wrapper.Response.Write(resp.Body)
 
+module PipelineLocators =
+    
     let GetPipelineFromAssembly () =
         FindPipeline ()
 
@@ -86,17 +93,4 @@ type FancyHttpRequestHandler () as this =
         | Some x -> x
         | None -> GetPipelineFromAssembly()
 
-    interface IHttpHandler with
-        member this.IsReusable 
-            with get () = false
-
-        member this.ProcessRequest (context:HttpContext) =
-            let wrapper = HttpContextWrapper(context)
-            let req = ConvertRequest wrapper
-            let pipeline = (GetPipelineLocation ()).Pipeline
-            let computation = async {
-                let! (req, resp) = ExecutePipelineAsync pipeline req DefaultResponse
-                CreateResponse resp wrapper
-            }
-            let result = Async.RunSynchronously (computation)
-            ()
+    let PipelineLocation = GetPipelineLocation()
