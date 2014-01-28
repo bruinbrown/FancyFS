@@ -40,9 +40,8 @@ type Pipeline =
         Next : Pipeline option
     }
 
-[<System.AttributeUsage(System.AttributeTargets.Field)>]
-type PipelineAttribute () =
-    inherit System.Attribute()
+type IPipelineLocation =
+    abstract member Pipeline : Pipeline with get
 
 module App =
     
@@ -55,6 +54,17 @@ module App =
     let (==>) pipeline func =
         let p = { Element = func; Next = None; }
         { pipeline with Next = Some p; }
+
+    let FindPipeline () =
+        let pipelineInterface = typeof<IPipelineLocation>
+        let pipelineLocs = System.AppDomain.CurrentDomain.GetAssemblies()
+                           |> Seq.map (fun t -> t.GetTypes())
+                           |> Seq.concat
+                           |> Seq.filter (fun t -> pipelineInterface.IsAssignableFrom(t))
+                           |> Seq.filter (fun t -> not (t.Assembly = pipelineInterface.Assembly))
+                           |> Seq.head
+        let pipelineLocInst = System.Activator.CreateInstance(pipelineLocs) :?> IPipelineLocation
+        pipelineLocInst
 
     let ExecutePipeline pipeline request =
         let rec ExecuteElement req resp elem =
