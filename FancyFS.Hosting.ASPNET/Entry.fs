@@ -23,12 +23,12 @@ type FancyPipelineElement () =
 type FancyConfigurationSection () =
     inherit ConfigurationSection()
 
+    [<ConfigurationProperty("pipeline")>]
     member this.Pipeline
         with get () = this.["pipeline"] :?> FancyPipelineElement
         and set (v:FancyPipelineElement) = this.["pipeline"] <- (v :> obj)
 
 type FancyHttpRequestHandler () as this = 
-
     let ConvertRequest (wrapper:HttpContextWrapper) =
         let rec ToMap (collection:Collections.Specialized.NameValueCollection) (dict:Map<string, string>) index =
             if index = collection.Count then dict
@@ -65,6 +65,27 @@ type FancyHttpRequestHandler () as this =
         | None -> wrapper.Response.StatusCode <- 500
         wrapper.Response.Write(resp.Body)
 
+    let GetPipelineFromAssembly () =
+        FindPipeline ()
+
+    let GetPipelineFromConfig () =
+        try
+            let configSection = (ConfigurationManager.GetSection("fancyfs") :?> FancyConfigurationSection)
+            let assemblyStr = configSection.Pipeline.Assembly
+            let typeStr =  configSection.Pipeline.Type
+            let fullname = String.Concat(typeStr, ", ", assemblyStr)
+            let t = Type.GetType(fullname)
+            let inst = Activator.CreateInstance(t) :?> IPipelineLocation
+            Some inst
+        with
+        | exn -> None
+
+    let GetPipelineLocation () =
+        match GetPipelineFromConfig () with
+        | Some x -> x
+        | None -> GetPipelineFromAssembly()
+
+
     interface IHttpHandler with
         member this.IsReusable 
             with get () = false
@@ -73,7 +94,7 @@ type FancyHttpRequestHandler () as this =
             let wrapper = HttpContextWrapper(context)
             let req = ConvertRequest wrapper
             let writerFunc = fun (req, resp) -> (req, { resp with Body = "test"})
-            let pipeline = BaseRequest ==> writerFunc
+            let pipeline = (GetPipelineLocation ()).Pipeline
             let resp = ExecutePipeline pipeline req
             CreateResponse resp wrapper
             ()
