@@ -17,12 +17,19 @@ module AppTests =
         Count pipeline 0
 
     [<Test>]
-    let ``Using ==> should increase pipeline length`` () =
-        let testFun = fun (req, resp) -> (req, resp)
-
+    let ``BaseRequest should cause pipeline count to remain at zero`` () =
         let emptyPipeline = BaseRequest
-
-        let newPipeline = emptyPipeline ==> testFun
-
         (PipelineLength emptyPipeline) |> should equal 0
+
+    [<Test>]
+    let ``Using ==> should increase pipeline length`` () =
+        let testFun = fun inp -> inp
+        let newPipeline = BaseRequest ==> testFun
         (PipelineLength newPipeline) |> should equal 1
+
+    [<Test>]
+    let ``Using multiple ==> should make pipeline to be same length`` () =
+        let testFun = fun inp -> inp
+        do BaseRequest.Next <- None
+        let newPipeline = BaseRequest ==> testFun ==> testFun ==> testFun ==> testFun
+        (PipelineLength newPipeline) |> should equal 4
