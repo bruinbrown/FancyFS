@@ -1,4 +1,4 @@
-﻿namespace FancyFS.Core
+﻿namespace FancyFS.Core.Tests
 
 open FsUnit
 open NUnit.Framework
@@ -8,7 +8,7 @@ module PipelineTests =
 
     open FancyFS.Core
     open FancyFS.Core.PipelineModule
-    open FancyFS.Core.ResponseModule
+    open FancyFS.Core.RequestResponseModule
 
     let SampleRequest = { Headers = Map.empty; QueryString = Map.empty; Cookies = []; Path = System.Uri("http://wwww.google.com"); User = None; }
 

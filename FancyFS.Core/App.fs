@@ -65,5 +65,7 @@ module PipelineModule =
             }
         pipeline asyncInput
 
-module ResponseModule =
+module RequestResponseModule =
     let DefaultResponse = { Headers = Map.empty; StatusCode = None; Body = ""; }
+
+    let EmptyRequest = { Headers = Map.empty; Cookies = []; QueryString = Map.empty; Path = System.Uri("http://www.google.com"); User = None }
