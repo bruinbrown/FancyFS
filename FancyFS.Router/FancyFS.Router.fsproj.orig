@@ -5,13 +5,13 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>8efcd092-048d-4d44-8c07-ff530799729c</ProjectGuid>
+    <ProjectGuid>936395ec-561b-482c-8d9a-ab3bddad2abf</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>FancyFS.Core</RootNamespace>
-    <AssemblyName>FancyFS.Core</AssemblyName>
+    <RootNamespace>FancyFS.Router</RootNamespace>
+    <AssemblyName>FancyFS.Router</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFSharpCoreVersion>4.3.1.0</TargetFSharpCoreVersion>
-    <Name>FancyFS.Core</Name>
+    <Name>FancyFS.Router</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,7 +21,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Debug\FancyFS.Core.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\FancyFS.Router.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,7 +30,7 @@
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Release\FancyFS.Core.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\FancyFS.Router.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
@@ -42,9 +42,18 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommonDataStructures.fs" />
-    <Compile Include="App.fs" />
-    <Compile Include="BasicAuth.fs" />
+<<<<<<< HEAD
+=======
+    <Compile Include="RouterTrie.fs" />
+    <Compile Include="Router.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FancyFS.Core\FancyFS.Core.fsproj">
+      <Name>FancyFS.Core</Name>
+      <Project>{8efcd092-048d-4d44-8c07-ff530799729c}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+>>>>>>> router
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>

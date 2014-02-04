@@ -6,7 +6,7 @@ open System.Web
 open System.Configuration
 
 open FancyFS.Core
-open FancyFS.Core.ResponseModule
+open FancyFS.Core.RequestResponseModule
 open FancyFS.Core.PipelineModule
 
 type FancyPipelineElement () = 
@@ -58,7 +58,7 @@ module RequestResponseMappers =
         { Headers = headers; QueryString = qs; User = user; Path = path; Cookies = cookies; }
 
 
-    let CreateResponse resp (wrapper:HttpContextBase) =
+    let CreateResponse (resp:Response) (wrapper:HttpContextBase) =
         let rec AddHeaders (headers:(string * string) list) =
             match headers with
             | [] -> ()

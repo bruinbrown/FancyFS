@@ -1,7 +1,7 @@
 ﻿namespace FancyFS.ASP.Example
 
 open FancyFS.Core
-open FancyFS.Core.ResponseModule
+open FancyFS.Core.RequestResponseModule
 open FancyFS.Core.PipelineModule
 
 type ExamplePipelineLocation () =

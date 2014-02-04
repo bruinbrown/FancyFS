@@ -7,7 +7,7 @@ open System.Web
 
 open FancyFS.Core
 open FancyFS.Core.PipelineModule
-open FancyFS.Core.ResponseModule
+open FancyFS.Core.RequestResponseModule
 open FancyFS.Hosting.ASPNET.PipelineLocators
 open FancyFS.Hosting.ASPNET.RequestResponseMappers
 
@@ -47,7 +47,7 @@ type HttpAsyncHandler () as x =
             with get () = x.IsReusable
 
 
-type FancyRequestHandler () as x =
+type FancyRequestHandler () =
     inherit HttpAsyncHandler ()
 
     override x.IsReusable

@@ -42,6 +42,15 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="RouterTrie.fs" />
+    <Compile Include="Router.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FancyFS.Core\FancyFS.Core.fsproj">
+      <Name>FancyFS.Core</Name>
+      <Project>{8efcd092-048d-4d44-8c07-ff530799729c}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>

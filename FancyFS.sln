@@ -11,6 +11,10 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FancyFS.Hosting.ASPNET", "F
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FancyFS.ASP.Example", "FancyFS.ASP.Example\FancyFS.ASP.Example.fsproj", "{FFD7D40D-AC94-4A94-AA58-20D52A2B1DAF}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FancyFS.Router", "FancyFS.Router\FancyFS.Router.fsproj", "{936395EC-561B-482C-8D9A-AB3BDDAD2ABF}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FancyFS.Router.Tests", "FancyFS.Router.Tests\FancyFS.Router.Tests.fsproj", "{9C78314E-A46B-4C36-B5B1-E06B07ADAE0D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{FFD7D40D-AC94-4A94-AA58-20D52A2B1DAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FFD7D40D-AC94-4A94-AA58-20D52A2B1DAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FFD7D40D-AC94-4A94-AA58-20D52A2B1DAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{936395EC-561B-482C-8D9A-AB3BDDAD2ABF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{936395EC-561B-482C-8D9A-AB3BDDAD2ABF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{936395EC-561B-482C-8D9A-AB3BDDAD2ABF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{936395EC-561B-482C-8D9A-AB3BDDAD2ABF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C78314E-A46B-4C36-B5B1-E06B07ADAE0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C78314E-A46B-4C36-B5B1-E06B07ADAE0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C78314E-A46B-4C36-B5B1-E06B07ADAE0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C78314E-A46B-4C36-B5B1-E06B07ADAE0D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
