@@ -42,6 +42,7 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommonDataStructures.fs" />
     <Compile Include="App.fs" />
     <Compile Include="BasicAuth.fs" />
   </ItemGroup>
