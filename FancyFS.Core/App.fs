@@ -51,12 +51,19 @@ module PipelineModule =
         let pipelineLocInst = System.Activator.CreateInstance(pipelineLocs) :?> IPipelineLocation
         pipelineLocInst 
 
-    (* The reason for a custom operator for now is that it leaves the potential for adding in steps which may
-       happen between pipeline functions. E.g. we may choose to return an indication of whether the 
-       pipeline should terminate *)
+    (* Being able to terminate a response early is important in the case of handling the likes of static content
+       Should we have found a file match for some static content then we don't want to returna  404 if the same
+       route isn't found in the router *)
     let (==>) (f:Async<Request * Response> -> Async<Request * Response>) g (x:Async<Request * Response>) =
-        let res = f x
-        g res
+        let next = async {
+            let fromFirst = f x
+            let! req, resp = fromFirst
+            let! response = match resp.StatusCode with
+                            | Some x -> fromFirst
+                            | None -> g fromFirst
+            return response
+        }
+        next
 
     let ExecutePipelineAsync pipeline request initialResponse =
         let asyncInput =
