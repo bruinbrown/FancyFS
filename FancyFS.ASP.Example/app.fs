@@ -38,8 +38,12 @@ type ExamplePipelineLocation () =
             do! Async.Sleep(10000)
             return (req, resp)
         })
+     
+    let c = UsersModule.CreateUsersRoute
         
-    let pipeline = writerFunc ==> delayFunc ==> writerFunc
+    let routerElement = GetPipelineElement ()
+
+    let pipeline = routerElement
 
     interface IPipelineLocation with
         member this.Pipeline
