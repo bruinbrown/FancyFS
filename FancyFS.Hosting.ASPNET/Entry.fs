@@ -55,7 +55,8 @@ module RequestResponseMappers =
         let user = None
         let path = wrapper.Request.Url
         let cookies = ConvertCookies wrapper.Request.Cookies [] 0
-        { Headers = headers; QueryString = qs; User = user; Path = path; Cookies = cookies; }
+        let reqMethod = RequestMethod.Parse(typeof<RequestMethod>, wrapper.Request.HttpMethod) :?> RequestMethod
+        { Headers = headers; QueryString = qs; User = user; Path = path; Cookies = cookies; RequestMethod = reqMethod }
 
 
     let CreateResponse (resp:Response) (wrapper:HttpContextBase) =

@@ -6,6 +6,12 @@ type IUser =
     interface
     end
 
+type RequestMethod =
+    | GET = 0
+    | POST = 1
+    | PUT = 2
+    | DELETE = 3
+
 type Cookie =
     {
         Name : string
@@ -20,6 +26,7 @@ type Cookie =
 
 type Request =
     {
+        RequestMethod : RequestMethod
         Cookies : Cookie list
         Headers : Map<string, string>
         QueryString : Map<string, string>
@@ -75,4 +82,4 @@ module PipelineModule =
 module RequestResponseModule =
     let DefaultResponse = { Headers = Map.empty; StatusCode = None; Body = ""; }
 
-    let EmptyRequest = { Headers = Map.empty; Cookies = []; QueryString = Map.empty; Path = System.Uri("http://www.google.com"); User = None }
+    let EmptyRequest = { Headers = Map.empty; Cookies = []; QueryString = Map.empty; Path = System.Uri("http://www.google.com"); User = None; RequestMethod = RequestMethod.GET }

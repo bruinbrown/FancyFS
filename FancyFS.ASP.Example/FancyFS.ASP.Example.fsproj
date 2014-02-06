@@ -94,6 +94,11 @@
     <Compile Include="app.fs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FancyFS.Router\FancyFS.Router.fsproj">
+      <Name>FancyFS.Router</Name>
+      <Project>{936395ec-561b-482c-8d9a-ab3bddad2abf}</Project>
+      <Private>True</Private>
+    </ProjectReference>
     <Reference Include="mscorlib" />
     <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Private>True</Private>

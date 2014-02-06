@@ -1,14 +1,25 @@
-﻿namespace FancyFS.Routing.Trie
+﻿namespace FancyFS.Routing
+
+open FancyFS.Core
+
+type Input = {
+    PathVariables : Map<string, string>
+
+    Request : Request
+}
+
+namespace FancyFS.Routing.Trie
 
 open System.Text
 open FancyFS.Core
 open FancyFS.Core.DataStructures
+open FancyFS.Routing
 
-type TrieNodeFunction = Async<Request * Response> -> Async<Request * Response>
+type TrieNodeFunction = (Input * Response) -> Async<Response>
 
 module RouterTrie =
 
-    let CreateTrie (routeDefinitions:seq<string * string * TrieNodeFunction>) =
+    let CreateTrie (routeDefinitions:seq<string * TrieNodeFunction>) =
         let rec generateTrieNode routeDefns =
             let isSomeFunction = routeDefns
                                  |> Seq.filter (fun (path, _) -> path = [])
@@ -26,24 +37,20 @@ module RouterTrie =
             Node(dict nextRouteFragments, isSomeFunction)
         
         let definitions = routeDefinitions
-                          |> Seq.map (fun (httpMethod, route, fn) -> let path = if route.StartsWith("/") then 
-                                                                                    (sprintf "%s%s" httpMethod route)
-                                                                                else
-                                                                                    (sprintf "%s/%s" httpMethod route)
-                                                                     path.Split('/') |> List.ofArray, fn)
+                          |> Seq.map (fun (route, fn) -> route.Split('/') |> List.ofArray, fn)
         generateTrieNode definitions
 
     let GetRouteFunction trie (route:string) =
-        let rec getFunction trie routeFragments =
+        let rec getFunction trie routeFragments routeVariables =
             match routeFragments with
             | [] -> match trie with
-                    | Node (_, fn) -> fn
-                    | _ -> None
+                    | Node (_, fn) -> fn, routeVariables
+                    | _ -> None, Map.empty
             | x :: xs -> match trie with
                          | Node (dict, _) -> if dict.ContainsKey(x) then
-                                                 getFunction dict.[x] xs
+                                                 getFunction dict.[x] xs routeVariables
                                              else
-                                                 None
-                         | _ -> None
-        getFunction trie (route.Split('/') |> List.ofArray)
+                                                 None, Map.empty
+                         | _ -> None, Map.empty
+        getFunction trie (route.Split('/') |> List.ofArray) Map.empty
 
