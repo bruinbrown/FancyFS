@@ -2,9 +2,9 @@
 
 open System.Collections.Generic
 
-type RouteBase(pars:Dictionary<string, obj>) as this =
+type RouteBase(pars:IDictionary<string, obj>) as this =
 
-    [<DefaultValue>] val mutable private routeParameters : Dictionary<string, obj>
+    [<DefaultValue>] val mutable private routeParameters : IDictionary<string, obj>
 
     do this.routeParameters <- pars
 
