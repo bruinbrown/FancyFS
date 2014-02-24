@@ -15,6 +15,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FancyFS.Router", "FancyFS.R
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FancyFS.Router.Tests", "FancyFS.Router.Tests\FancyFS.Router.Tests.fsproj", "{9C78314E-A46B-4C36-B5B1-E06B07ADAE0D}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FancyFS.Router.RouteTypeProvider", "FancyFS.Router.RouteTypeProvider\FancyFS.Router.RouteTypeProvider.fsproj", "{3AFE2F66-059E-4CA1-9F0C-A62F9C4F8380}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{9C78314E-A46B-4C36-B5B1-E06B07ADAE0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C78314E-A46B-4C36-B5B1-E06B07ADAE0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C78314E-A46B-4C36-B5B1-E06B07ADAE0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3AFE2F66-059E-4CA1-9F0C-A62F9C4F8380}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AFE2F66-059E-4CA1-9F0C-A62F9C4F8380}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AFE2F66-059E-4CA1-9F0C-A62F9C4F8380}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AFE2F66-059E-4CA1-9F0C-A62F9C4F8380}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

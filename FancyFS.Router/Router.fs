@@ -38,6 +38,7 @@ module Router =
     let GetPipelineElement () =
         (* Here we'll need to initialise all static constructors which reference CreateRoute, otherwise
            we won't have anything in definedRoutes *)
+        
         let trie = CreateTrie ()
         HandleInput trie
 
