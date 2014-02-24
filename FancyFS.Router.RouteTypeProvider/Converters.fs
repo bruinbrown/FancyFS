@@ -4,6 +4,7 @@ type IRouteParser =
     abstract member MatchType : unit -> System.Type
     abstract member Parse : string -> obj
     abstract member Name : unit -> string
+    abstract member CanParse : string -> bool
 
 type IntRouteParser () =
     interface IRouteParser with
@@ -14,6 +15,9 @@ type IntRouteParser () =
 
         member this.Name () = "int"
 
+        member this.CanParse value =
+            System.Int32.TryParse(value) |> fst
+
 type DateTimeRouteParser () =
     interface IRouteParser with
         member this.MatchType () = typeof<System.DateTime>
@@ -22,6 +26,9 @@ type DateTimeRouteParser () =
             System.DateTime.Parse(value) :> obj
 
         member this.Name () = "datetime"
+
+        member this.CanParse value =
+            System.DateTime.TryParse(value) |> fst
 
 type GuidRouteParser () =
     interface IRouteParser with
@@ -32,6 +39,9 @@ type GuidRouteParser () =
 
         member this.Name () = "guid"
 
+        member this.CanParse value =
+            System.Guid.TryParse(value) |> fst
+
 type FloatRouteParser () =
     interface IRouteParser with
         member this.MatchType () = typeof<float>
@@ -40,6 +50,9 @@ type FloatRouteParser () =
             System.Double.Parse(value) :> obj
 
         member this.Name () = "float"
+
+        member this.CanParse value =
+            System.Double.TryParse(value) |> fst
 
 [<AutoOpen>]
 module RouteParserUtilities =
@@ -52,6 +65,12 @@ module RouteParserUtilities =
                                |> List.ofSeq
 
     let AvailableRouteParsers = routeParsers
+
+    let GetConverterName (pathSegment:string) =
+        let parts = pathSegment.TrimStart('{').TrimEnd('}').Split(':')
+        if parts.Length = 1 then
+            None
+        else Some parts.[1]
 
     let GetConverter converterName =
         routeParsers
@@ -68,3 +87,10 @@ module RouteParserUtilities =
         else
             let p = GetConverter (q.[1])
             q.[0], p.MatchType()
+
+    let IsParseable routeSegment value =
+        let converterName = GetConverterName routeSegment
+        match converterName with
+        | None -> true
+        | Some x -> let converter = GetConverter x
+                    converter.CanParse(value)
